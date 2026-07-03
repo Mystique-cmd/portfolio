@@ -1,0 +1,539 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="dark" />
+  <title>Mystique — Low-Level Offensive Engineering</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip" href="#content">Skip to content</a>
+
+  <!-- Ambient animated background -->
+  <canvas id="bg" aria-hidden="true"></canvas>
+
+  <header class="header" role="banner">
+    <div class="container header__inner">
+      <div class="brand" aria-label="Mystique">
+        <span class="brand__mark">▣</span>
+        <span class="brand__name">Mystique</span>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <a href="#about">About</a>
+        <a href="#skills">Skills</a>
+        <a href="#projects">Projects</a>
+        <a href="#philosophy">Philosophy</a>
+        <a href="#contact">Contact</a>
+      </nav>
+
+      <div class="status" aria-hidden="true">
+        <span class="status__dot"></span>
+        <span class="status__text">live recon</span>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+    <!-- HERO -->
+    <section class="section hero" aria-labelledby="hero-title">
+      <div class="container hero__grid">
+        <div class="hero__left">
+          <div class="kicker">low-level offensive engineering • systems thinking</div>
+          <h1 id="hero-title" class="hero__title">Breaking systems to understand them.</h1>
+          <p class="hero__sub">
+            <span class="mono">Low-Level Offensive Engineer</span>
+            <span class="sep">|</span>
+            <span class="mono">Systems Thinker</span>
+            <span class="sep">|</span>
+            <span class="mono">Cybersecurity Practitioner</span>
+          </p>
+
+          <div class="hero__cta">
+            <a class="btn btn--primary" href="#projects">View system snapshots</a>
+            <a class="btn btn--ghost" href="#contact">Signal for contact</a>
+          </div>
+
+          <div class="hero__meta" role="note">
+            <div class="metaCard" data-tilt>
+              <div class="metaCard__label">Mode</div>
+              <div class="metaCard__value mono">operator • analyst</div>
+              <div class="metaCard__bar" aria-hidden="true"></div>
+            </div>
+            <div class="metaCard" data-tilt>
+              <div class="metaCard__label">Focus</div>
+              <div class="metaCard__value mono">exploit dev • reversing</div>
+              <div class="metaCard__bar metaCard__bar--alt" aria-hidden="true"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero__right" aria-hidden="true">
+          <div class="terminal terminal--hero" data-pulse>
+            <div class="terminal__top">
+              <span class="termDot termDot--r"></span>
+              <span class="termDot termDot--y"></span>
+              <span class="termDot termDot--g"></span>
+              <span class="terminal__title mono">mystique@field:~</span>
+            </div>
+            <div class="terminal__body mono">
+              <div class="line"><span class="prompt">$</span> ./scan-hosts --fast --deep</div>
+              <div class="line ghost">loading signatures…</div>
+              <div class="line ghost">mapping attack surface…</div>
+              <div class="line">ready: <span class="hl">precision</span> mode</div>
+              <div class="line small">tip: hover cards in Skills for terminal previews</div>
+            </div>
+            <div class="terminal__foot">
+              <span class="mono">↳</span>
+              <span class="muted">system integrity begins with observation</span>
+            </div>
+          </div>
+
+          <div class="gridMotif" aria-hidden="true">
+            <div class="gridMotif__layer"></div>
+            <div class="gridMotif__layer gridMotif__layer--2"></div>
+            <div class="gridMotif__layer gridMotif__layer--3"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sectionDivider" aria-hidden="true"></div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about" aria-labelledby="about-title">
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/about</div>
+          <h2 id="about-title">Hands-on offensive engineering</h2>
+          <p class="sectionHeader__desc">
+            I build understanding by doing: reverse engineering, exploit development, and careful reasoning about
+            how software and systems fail.
+          </p>
+        </div>
+
+        <div class="cardsGrid">
+          <article class="card">
+            <h3 class="card__title mono">Curiosity → signal</h3>
+            <p class="card__body">
+              I follow the data path—where bytes move, where state changes, and where assumptions break.
+              Curiosity is the engine; precision is the steering.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title mono">Precision → leverage</h3>
+            <p class="card__body">
+              Exploits are not magic. They’re the end of an evidence chain: control-flow reality,
+              memory layout constraints, and reproducible impact.
+            </p>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title mono">Structure → mastery</h3>
+            <p class="card__body">
+              Systems thinking keeps the model coherent across layers—userspace, kernel boundaries,
+              firmware, and the interfaces between them.
+            </p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section" id="skills" aria-labelledby="skills-title">
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/skills</div>
+          <h2 id="skills-title">Terminal-grade capabilities</h2>
+          <p class="sectionHeader__desc">
+            Interactive cards that simulate the tools and workflows I use during reconnaissance and research.
+          </p>
+        </div>
+
+        <div class="skillsWrap" role="list">
+          <div class="skillCard" role="listitem" tabindex="0" data-command="nmap" data-output="Host discovery • service enumeration • version probes">
+            <div class="skillCard__top">
+              <div class="skillCard__title">Recon: <span class="mono">nmap</span></div>
+              <div class="chip">network surface</div>
+            </div>
+            <div class="skillCard__cmd mono">nmap -sV -sC -T4 -oN out.txt target</div>
+            <div class="skillCard__hint">Hover / Enter to preview</div>
+            <div class="skillCard__out" aria-hidden="true">
+              <div class="outHeader mono">output:</div>
+              <div class="outBody">Host discovery • service enumeration • version probes</div>
+            </div>
+          </div>
+
+          <div class="skillCard" role="listitem" tabindex="0" data-command="radare2" data-output="disassembly • analysis • function graphing">
+            <div class="skillCard__top">
+              <div class="skillCard__title">Reversing: <span class="mono">radare2</span></div>
+              <div class="chip chip--alt">binary archaeology</div>
+            </div>
+            <div class="skillCard__cmd mono">r2 -q sample.bin -A</div>
+            <div class="skillCard__hint">Hover / Enter to preview</div>
+            <div class="skillCard__out" aria-hidden="true">
+              <div class="outHeader mono">output:</div>
+              <div class="outBody">disassembly • analysis • function graphing</div>
+            </div>
+          </div>
+
+          <div class="skillCard" role="listitem" tabindex="0" data-command="gdb" data-output="breakpoints • register tracing • exploit debugging">
+            <div class="skillCard__top">
+              <div class="skillCard__title">Debugging: <span class="mono">gdb</span></div>
+              <div class="chip chip--red">control-flow truth</div>
+            </div>
+            <div class="skillCard__cmd mono">gdb ./app</div>
+            <div class="skillCard__hint">Hover / Enter to preview</div>
+            <div class="skillCard__out" aria-hidden="true">
+              <div class="outHeader mono">output:</div>
+              <div class="outBody">breakpoints • register tracing • exploit debugging</div>
+            </div>
+          </div>
+
+          <div class="skillCard" role="listitem" tabindex="0" data-command="pwntools" data-output="reliable IO • offsets • payload iteration">
+            <div class="skillCard__top">
+              <div class="skillCard__title">Exploit dev: <span class="mono">pwntools</span></div>
+              <div class="chip chip--alt2">automation</div>
+            </div>
+            <div class="skillCard__cmd mono">python3 exploit.py --remote host:port</div>
+            <div class="skillCard__hint">Hover / Enter to preview</div>
+            <div class="skillCard__out" aria-hidden="true">
+              <div class="outHeader mono">output:</div>
+              <div class="outBody">reliable IO • offsets • payload iteration</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="skillStack">
+          <div class="stackRow">
+            <div class="stackLabel">Languages</div>
+            <div class="stackTags" aria-label="Languages">
+              <span class="tag mono">C</span>
+              <span class="tag mono">C++</span>
+              <span class="tag mono">Assembly</span>
+            </div>
+          </div>
+          <div class="stackRow">
+            <div class="stackLabel">Platforms</div>
+            <div class="stackTags" aria-label="Platforms">
+              <span class="tag">Linux tooling</span>
+              <span class="tag">debug stacks</span>
+              <span class="tag">system boundaries</span>
+            </div>
+          </div>
+          <div class="stackRow">
+            <div class="stackLabel">Research</div>
+            <div class="stackTags" aria-label="Research">
+              <span class="tag">reverse engineering</span>
+              <span class="tag">exploit development</span>
+              <span class="tag">bug bounty recon tools</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section" id="projects" aria-labelledby="projects-title">
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/projects</div>
+          <h2 id="projects-title">System snapshots</h2>
+          <p class="sectionHeader__desc">
+            Case-study style breakdowns—how I turn signals into reproducible, testable conclusions.
+          </p>
+        </div>
+
+        <div class="projectGrid">
+          <article class="project" data-project>
+            <div class="project__top">
+              <div>
+                <div class="project__eyebrow mono">snapshot-01</div>
+                <h3 class="project__title">Kernel boundary desync (write-what-where)</h3>
+              </div>
+              <div class="project__severity">impact: critical</div>
+            </div>
+
+            <div class="snapshot">
+              <div class="snapRow">
+                <div class="snapKey mono">Context</div>
+                <div class="snapVal">State transitions across a privileged interface</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Attack surface</div>
+                <div class="snapVal">user-controlled buffers + insufficient validation</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Method</div>
+                <div class="snapVal">trace → reconstruct control-flow → craft primitives</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Payload</div>
+                <div class="snapVal">iterative overwrite with guard condition mapping</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Findings</div>
+                <div class="snapVal">primitive reliability depends on layout determinism</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Mitigation</div>
+                <div class="snapVal">strict size/offset checks + hardened parsing</div>
+              </div>
+            </div>
+
+            <div class="project__actions">
+              <button class="btn btn--ghost" type="button" data-toggle="details-1">Toggle technical notes</button>
+              <span class="muted mono" data-note-1 hidden>
+                notes: validate assumptions at each boundary; keep an evidence ledger.
+              </span>
+            </div>
+          </article>
+
+          <article class="project" data-project>
+            <div class="project__top">
+              <div>
+                <div class="project__eyebrow mono">snapshot-02</div>
+                <h3 class="project__title">Heap shape manipulation (use-after-free)</h3>
+              </div>
+              <div class="project__severity project__severity--alt">impact: high</div>
+            </div>
+
+            <div class="snapshot">
+              <div class="snapRow">
+                <div class="snapKey mono">Context</div>
+                <div class="snapVal">Lifetime mismatch inside a request handling path</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Attack surface</div>
+                <div class="snapVal">concurrent triggers + predictable allocator behavior</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Method</div>
+                <div class="snapVal">instrument → observe allocator states → synchronize triggers</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Payload</div>
+                <div class="snapVal">object reclaim with controlled metadata overwrite</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Findings</div>
+                <div class="snapVal">exploitability depends on precise timing windows</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Mitigation</div>
+                <div class="snapVal">ownership enforcement + safe reference patterns</div>
+              </div>
+            </div>
+
+            <div class="project__actions">
+              <button class="btn btn--ghost" type="button" data-toggle="details-2">Toggle technical notes</button>
+              <span class="muted mono" data-note-2 hidden>
+                notes: model allocator behavior; treat timing as an engineering constraint.
+              </span>
+            </div>
+          </article>
+
+          <article class="project" data-project>
+            <div class="project__top">
+              <div>
+                <div class="project__eyebrow mono">snapshot-03</div>
+                <h3 class="project__title">Firmware parser confusion (logic flaw chain)</h3>
+              </div>
+              <div class="project__severity project__severity--red">impact: medium</div>
+            </div>
+
+            <div class="snapshot">
+              <div class="snapRow">
+                <div class="snapKey mono">Context</div>
+                <div class="snapVal">Chained parsing across layers of validation</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Attack surface</div>
+                <div class="snapVal">crafted inputs reaching inconsistent state machines</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Method</div>
+                <div class="snapVal">reverse state transitions → constrain grammar → prove reachability</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Payload</div>
+                <div class="snapVal">grammar-compliant confusion driving unsafe branch selection</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Findings</div>
+                <div class="snapVal">defense-in-depth fails when assumptions diverge</div>
+              </div>
+              <div class="snapRow">
+                <div class="snapKey mono">Mitigation</div>
+                <div class="snapVal">unify validation logic + strengthen state invariants</div>
+              </div>
+            </div>
+
+            <div class="project__actions">
+              <button class="btn btn--ghost" type="button" data-toggle="details-3">Toggle technical notes</button>
+              <span class="muted mono" data-note-3 hidden>
+                notes: align invariants across layers; if states disagree, the system is at risk.
+              </span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHILOSOPHY -->
+    <section class="section" id="philosophy" aria-labelledby="philosophy-title">
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/philosophy</div>
+          <h2 id="philosophy-title">Systems thinking, translated</h2>
+          <p class="sectionHeader__desc">
+            Memory, kernel, firmware—each layer is a contract. Understanding the contract is how you break it safely.
+          </p>
+        </div>
+
+        <div class="philoGrid">
+          <div class="diagram" aria-hidden="true">
+            <div class="diagram__stack">
+              <div class="layer layer--1">
+                <div class="layer__label mono">memory</div>
+                <div class="layer__glyph">⟦⟧</div>
+              </div>
+              <div class="layer layer--2">
+                <div class="layer__label mono">kernel</div>
+                <div class="layer__glyph">⌁</div>
+              </div>
+              <div class="layer layer--3">
+                <div class="layer__label mono">firmware</div>
+                <div class="layer__glyph">⟐</div>
+              </div>
+              <div class="layer layer--4">
+                <div class="layer__label mono">interface</div>
+                <div class="layer__glyph">↔</div>
+              </div>
+            </div>
+
+            <div class="diagram__arrows" aria-hidden="true">
+              <span class="arr arr--a">→</span>
+              <span class="arr arr--b">→</span>
+              <span class="arr arr--c">→</span>
+            </div>
+          </div>
+
+          <div class="quotes">
+            <div class="quote">
+              <div class="quote__mark">“</div>
+              <p class="quote__text">You don’t become dangerous by reading — you become dangerous by doing.</p>
+            </div>
+
+            <div class="principles">
+              <div class="principle">
+                <div class="principle__k mono">01</div>
+                <div class="principle__t">Follow the evidence chain.</div>
+              </div>
+              <div class="principle">
+                <div class="principle__k mono">02</div>
+                <div class="principle__t">Model invariants, not assumptions.</div>
+              </div>
+              <div class="principle">
+                <div class="principle__k mono">03</div>
+                <div class="principle__t">Exploitability is engineering.</div>
+              </div>
+            </div>
+
+            <div class="callout terminal terminal--small" aria-hidden="true">
+              <div class="terminal__top">
+                <span class="termDot termDot--r"></span>
+                <span class="termDot termDot--y"></span>
+                <span class="termDot termDot--g"></span>
+                <span class="terminal__title mono">analysis/reasoning</span>
+              </div>
+              <div class="terminal__body mono">
+                <div class="line">invariant check: <span class="hl">green</span></div>
+                <div class="line ghost">assumption drift: watch boundaries</div>
+                <div class="line">model coherence: <span class="hl hl--alt">stable</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section" id="contact" aria-labelledby="contact-title">
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/contact</div>
+          <h2 id="contact-title">Signal channel</h2>
+          <p class="sectionHeader__desc">
+            Send a message like you’re typing at a prompt. Links are placeholders—swap them for your real profiles.
+          </p>
+        </div>
+
+        <div class="contactGrid">
+          <div class="contactCard">
+            <form class="promptForm" id="contactForm" action="#" method="post">
+              <div class="promptForm__line">
+                <span class="prompt">$</span>
+                <label class="promptForm__label" for="email">email</label>
+                <input id="email" name="email" type="email" placeholder="you@domain.com" required autocomplete="email" />
+              </div>
+              <div class="promptForm__line">
+                <span class="prompt">$</span>
+                <label class="promptForm__label" for="message">message</label>
+              </div>
+              <textarea id="message" name="message" rows="6" placeholder="state your intent; keep it precise…" required></textarea>
+
+              <div class="promptForm__actions">
+                <button class="btn btn--primary" type="submit">Transmit</button>
+                <button class="btn btn--ghost" type="button" id="copyMail">Copy mailto</button>
+              </div>
+
+              <p class="muted" id="formStatus" role="status" aria-live="polite"></p>
+            </form>
+          </div>
+
+          <aside class="linksCard" aria-label="Links">
+            <div class="linksCard__title mono">profiles</div>
+            <a class="linkRow" href="#" target="_blank" rel="noreferrer">
+              <span class="linkRow__icon">↗</span>
+              <span class="linkRow__text">GitHub</span>
+              <span class="linkRow__meta mono">github.com/mystique</span>
+            </a>
+            <a class="linkRow" href="#" target="_blank" rel="noreferrer">
+              <span class="linkRow__icon">↗</span>
+              <span class="linkRow__text">LinkedIn</span>
+              <span class="linkRow__meta mono">linkedin.com/in/mystique</span>
+            </a>
+            <a class="linkRow" href="#" target="_blank" rel="noreferrer">
+              <span class="linkRow__icon">↗</span>
+              <span class="linkRow__text">Bug bounty</span>
+              <span class="linkRow__meta mono">HackerOne / Bugcrowd</span>
+            </a>
+
+            <div class="divider" aria-hidden="true"></div>
+
+            <div class="linksCard__title mono">contact</div>
+            <a class="linkRow" href="mailto:mystique@example.com" id="mailtoLink">
+              <span class="linkRow__icon">✉</span>
+              <span class="linkRow__text">Email</span>
+              <span class="linkRow__meta mono">mystique@example.com</span>
+            </a>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer" role="contentinfo">
+    <div class="container footer__inner">
+      <span class="muted">© <span id="year"></span> Mystique. Dark mode only.</span>
+      <span class="muted mono">grid://systems-thinking</span>
+    </div>
+  </footer>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
+
