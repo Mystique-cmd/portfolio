@@ -148,24 +148,273 @@
     });
   }
 
-  // ===== Project notes toggle =====
+  // ===== Project notes toggle (delegated, works with dynamic cards) =====
   function initProjects() {
-    const btns = document.querySelectorAll('[data-toggle]');
-    btns.forEach((btn) => {
-      btn.addEventListener('click', () => {
-        const id = btn.getAttribute('data-toggle');
-        const note = document.querySelector(`[data-note-${id.split('-')[1]}]`);
-        // note selector depends on our markup: data-note-1, data-note-2, etc.
-        // We'll map robustly:
-        let idx = id.split('-')[1];
-        const target = document.querySelector(`[data-note-${idx}]`);
-        if (!target) return;
-        const hidden = target.hasAttribute('hidden');
-        if (hidden) target.removeAttribute('hidden');
-        else target.setAttribute('hidden', '');
-      });
+    document.addEventListener('click', (e) => {
+      const btn = e.target?.closest?.('[data-toggle]');
+      if (!btn) return;
+      const id = btn.getAttribute('data-toggle');
+      if (!id) return;
+      const idx = id.split('-')[1];
+      const target = document.querySelector(`[data-note-${idx}]`);
+      if (!target) return;
+      const hidden = target.hasAttribute('hidden');
+      if (hidden) target.removeAttribute('hidden');
+      else target.setAttribute('hidden', '');
     });
   }
+
+  // ===== Intent/sub-category layered navigation =====
+  const PROJECT_CATALOG = [
+    {
+      id: 'snapshot-01',
+      intent: 'Academic',
+      subCategory: 'Algorithms',
+      title: 'Kernel boundary desync (write-what-where)',
+      severity: { kind: 'critical', className: '' },
+      snapshotRows: [
+        ['Context', 'State transitions across a privileged interface'],
+        ['Attack surface', 'user-controlled buffers + insufficient validation'],
+        ['Method', 'trace → reconstruct control-flow → craft primitives'],
+        ['Payload', 'iterative overwrite with guard condition mapping'],
+        ['Findings', 'primitive reliability depends on layout determinism'],
+        ['Mitigation', 'strict size/offset checks + hardened parsing'],
+      ],
+      notes: 'notes: validate assumptions at each boundary; keep an evidence ledger.',
+      outcomeTags: ['Research Prototype'],
+    },
+    {
+      id: 'snapshot-02',
+      intent: 'Professional',
+      subCategory: 'Vulnerability Research',
+      title: 'Heap shape manipulation (use-after-free)',
+      severity: { kind: 'high', className: 'project__severity--alt' },
+      snapshotRows: [
+        ['Context', 'Lifetime mismatch inside a request handling path'],
+        ['Attack surface', 'concurrent triggers + predictable allocator behavior'],
+        ['Method', 'instrument → observe allocator states → synchronize triggers'],
+        ['Payload', 'object reclaim with controlled metadata overwrite'],
+        ['Findings', 'exploitability depends on precise timing windows'],
+        ['Mitigation', 'ownership enforcement + safe reference patterns'],
+      ],
+      notes: 'notes: model allocator behavior; treat timing as an engineering constraint.',
+      outcomeTags: ['Production-ready'],
+    },
+    {
+      id: 'snapshot-03',
+      intent: 'Teaching & Narrative',
+      subCategory: 'Write-ups',
+      title: 'Firmware parser confusion (logic flaw chain)',
+      severity: { kind: 'medium', className: 'project__severity--red' },
+      snapshotRows: [
+        ['Context', 'Chained parsing across layers of validation'],
+        ['Attack surface', 'crafted inputs reaching inconsistent state machines'],
+        ['Method', 'reverse state transitions → constrain grammar → prove reachability'],
+        ['Payload', 'grammar-compliant confusion driving unsafe branch selection'],
+        ['Findings', 'defense-in-depth fails when assumptions diverge'],
+        ['Mitigation', 'unify validation logic + strengthen state invariants'],
+      ],
+      notes: 'notes: align invariants across layers; if states disagree, the system is at risk.',
+      outcomeTags: ['Learning Exercise'],
+    },
+  ];
+
+  const INTENTS = [
+    'Academic',
+    'Professional',
+    'Personal',
+    'Experimental',
+    'Teaching & Narrative',
+  ];
+
+  const SUB_CATEGORIES_BY_INTENT = {
+    Academic: ['Algorithms', 'Distributed Systems', 'Database Design', 'Formal Language Theory'],
+    Professional: ['Vulnerability Research', 'Exploit Development', 'Recon Tooling', 'Security Automation'],
+    Personal: ['Portfolio & Branding', 'Finance/Trading Systems', 'Utility Scripts'],
+    Experimental: ['Reverse Engineering Experiments', 'Grammar/Parser Prototypes', 'System Internals Exploration'],
+    'Teaching & Narrative': ['Write-ups', 'Demo Exploits', 'Educational Scripts'],
+  };
+
+  function outcomeTagClass(tag) {
+    const t = String(tag).toLowerCase();
+    if (t.includes('prototype') || t.includes('research')) return 'outcomeTag--proto';
+    if (t.includes('production')) return 'outcomeTag--prod';
+    if (t.includes('learn') || t.includes('exercise')) return 'outcomeTag--learn';
+    return '';
+  }
+
+  function renderSubCategories(intent) {
+    const el = document.getElementById('subCategoryList');
+    if (!el) return;
+
+    el.innerHTML = '';
+    const subs = SUB_CATEGORIES_BY_INTENT[intent] || [];
+
+    // Prefer a sub-category that actually has a project; fall back to first.
+    const projectsForIntent = PROJECT_CATALOG.filter((p) => p.intent === intent);
+    const subWithProject = subs.find((s) => projectsForIntent.some((p) => p.subCategory === s));
+    const defaultSub = subWithProject || subs[0] || null;
+
+    subs.forEach((sub) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'subCatBtn';
+      btn.setAttribute('role', 'listitem');
+      btn.textContent = ''; // we'll add children below
+
+      const left = document.createElement('div');
+      left.className = 'subCatBtn__name';
+      left.textContent = sub;
+
+      const count = document.createElement('div');
+      count.className = 'subCatBtn__count mono';
+      count.textContent = String(projectsForIntent.filter((p) => p.subCategory === sub).length);
+
+      const row = document.createElement('span');
+      row.style.display = 'flex';
+      row.style.justifyContent = 'space-between';
+      row.style.width = '100%';
+      row.style.gap = '12px';
+      row.appendChild(left);
+      row.appendChild(count);
+
+      btn.appendChild(row);
+
+      const current = sub === defaultSub;
+      btn.setAttribute('aria-current', current ? 'true' : 'false');
+      btn.dataset.sub = sub;
+
+      btn.addEventListener('click', () => {
+        // update pressed state
+        el.querySelectorAll('[aria-current="true"]').forEach((b) => b.setAttribute('aria-current', 'false'));
+        btn.setAttribute('aria-current', 'true');
+        renderProjects({ intent, subCategory: sub });
+      });
+
+      el.appendChild(btn);
+    });
+
+    if (defaultSub) {
+      renderProjects({ intent, subCategory: defaultSub });
+    } else {
+      renderProjects({ intent, subCategory: '' });
+    }
+  }
+
+  function renderProjects({ intent, subCategory }) {
+    const grid = document.getElementById('projectGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const projects = PROJECT_CATALOG.filter((p) => p.intent === intent && (!subCategory || p.subCategory === subCategory));
+
+    if (!projects.length) {
+      const empty = document.createElement('div');
+      empty.className = 'card';
+      empty.innerHTML = `<h3 class="card__title mono" style="margin-bottom:6px">no projects</h3><p class="card__body">No snapshots mapped into this sub-category yet.</p>`;
+      grid.appendChild(empty);
+      return;
+    }
+
+    projects.forEach((p, i) => {
+      const idx = String(i + 1);
+      const article = document.createElement('article');
+      article.className = 'project';
+      article.setAttribute('data-project', '');
+
+      const severityClass = p.severity?.className || '';
+
+      const outcomeTagsHtml = (p.outcomeTags || [])
+        .map((t) => `<span class="outcomeTag ${outcomeTagClass(t)}">${escapeHtml(t)}</span>`)
+        .join('');
+
+      article.innerHTML = `
+        <div class="project__top">
+          <div>
+            <div class="project__eyebrow mono">${escapeHtml(p.id)}</div>
+            <h3 class="project__title">${escapeHtml(p.title)}</h3>
+          </div>
+          <div class="project__severity ${severityClass}">impact: ${escapeHtml(p.severity?.kind || '')}</div>
+        </div>
+
+        <div class="projectMetaRow" aria-label="Project classification">
+          <span class="metaBadge metaBadge--intent">${escapeHtml(p.intent)}</span>
+          <span class="metaBadge metaBadge--sub">${escapeHtml(p.subCategory)}</span>
+        </div>
+
+        <div class="outcomeTags" aria-label="Outcome tags">${outcomeTagsHtml}</div>
+
+        <div class="snapshot">
+          ${p.snapshotRows
+            .map(
+              (row) => `
+              <div class="snapRow">
+                <div class="snapKey mono">${escapeHtml(row[0])}</div>
+                <div class="snapVal">${escapeHtml(row[1])}</div>
+              </div>
+            `
+            )
+            .join('')}
+        </div>
+
+        <div class="project__actions">
+          <button class="btn btn--ghost" type="button" data-toggle="details-${idx}">Toggle technical notes</button>
+          <span class="muted mono" data-note-${idx} hidden>
+            ${escapeHtml(p.notes)}
+          </span>
+        </div>
+      `;
+
+      grid.appendChild(article);
+    });
+  }
+
+  function escapeHtml(s) {
+    return String(s)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '<')
+      .replaceAll('>', '>')
+      .replaceAll('"', '"')
+      .replaceAll("'", '&#039;');
+  }
+
+
+
+
+  function initProjectsNav() {
+    const intentButtons = document.querySelectorAll('.navNode[data-intent]');
+    const mapButtons = document.querySelectorAll('.mapNode[data-map]');
+
+    if (!intentButtons.length) return;
+
+    function setIntent(intent) {
+      // intent selector state
+      intentButtons.forEach((b) => {
+        const active = b.dataset.intent === intent;
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
+      // systems map state
+      mapButtons.forEach((b) => {
+        const active = b.dataset.map === intent;
+        b.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
+
+      renderSubCategories(intent);
+    }
+
+    intentButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setIntent(btn.dataset.intent));
+    });
+
+    mapButtons.forEach((btn) => {
+      btn.addEventListener('click', () => setIntent(btn.dataset.map));
+    });
+
+    // Initial render defaults to Academic.
+    setIntent('Academic');
+  }
+
 
   // ===== Contact form (mailto simulation) =====
   function initContact() {

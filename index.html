@@ -244,142 +244,79 @@
           <div class="sectionHeader__tag">/projects</div>
           <h2 id="projects-title">System snapshots</h2>
           <p class="sectionHeader__desc">
-            Case-study style breakdowns—how I turn signals into reproducible, testable conclusions.
+            Intent-first traversal. Systems map: Academic → Professional → Personal/Experimental → Teaching &amp; Narrative.
           </p>
         </div>
 
-        <div class="projectGrid">
-          <article class="project" data-project>
-            <div class="project__top">
-              <div>
-                <div class="project__eyebrow mono">snapshot-01</div>
-                <h3 class="project__title">Kernel boundary desync (write-what-where)</h3>
-              </div>
-              <div class="project__severity">impact: critical</div>
+        <!-- Layered navigation: intent → sub-category → project cards -->
+        <div class="projectsNav">
+          <div class="projectsNav__left" aria-label="Intent categories">
+            <div class="projectsNav__panelTitle mono">intent</div>
+            <div class="projectsNav__intentGrid" role="list">
+              <button class="navNode" type="button" role="listitem" data-intent="Academic" aria-pressed="true">
+                <span class="navNode__label">Academic</span>
+                <span class="navNode__meta mono">theory → models</span>
+              </button>
+              <button class="navNode" type="button" role="listitem" data-intent="Professional" aria-pressed="false">
+                <span class="navNode__label">Professional</span>
+                <span class="navNode__meta mono">impact → execution</span>
+              </button>
+              <button class="navNode" type="button" role="listitem" data-intent="Personal" aria-pressed="false">
+                <span class="navNode__label">Personal</span>
+                <span class="navNode__meta mono">utility → craft</span>
+              </button>
+              <button class="navNode" type="button" role="listitem" data-intent="Experimental" aria-pressed="false">
+                <span class="navNode__label">Experimental</span>
+                <span class="navNode__meta mono">probes → invariants</span>
+              </button>
+              <button class="navNode" type="button" role="listitem" data-intent="Teaching &amp; Narrative" aria-pressed="false">
+                <span class="navNode__label">Teaching &amp; Narrative</span>
+                <span class="navNode__meta mono">write-ups → demos</span>
+              </button>
             </div>
+          </div>
 
-            <div class="snapshot">
-              <div class="snapRow">
-                <div class="snapKey mono">Context</div>
-                <div class="snapVal">State transitions across a privileged interface</div>
+          <div class="projectsNav__center" aria-label="Systems map traversal">
+            <div class="systemsMap" role="img" aria-label="Traversal map">
+              <div class="systemsMap__nodes">
+                <button class="mapNode" type="button" data-map="Academic" aria-pressed="true">
+                  <span class="mapNode__glyph">A</span>
+                  <span class="mapNode__text">Academic</span>
+                </button>
+                <button class="mapNode" type="button" data-map="Professional" aria-pressed="false">
+                  <span class="mapNode__glyph">P</span>
+                  <span class="mapNode__text">Professional</span>
+                </button>
+                <button class="mapNode" type="button" data-map="Personal" aria-pressed="false">
+                  <span class="mapNode__glyph">P</span>
+                  <span class="mapNode__text">Personal</span>
+                </button>
+                <button class="mapNode" type="button" data-map="Experimental" aria-pressed="false">
+                  <span class="mapNode__glyph">E</span>
+                  <span class="mapNode__text">Experimental</span>
+                </button>
+                <button class="mapNode" type="button" data-map="Teaching &amp; Narrative" aria-pressed="false">
+                  <span class="mapNode__glyph">T</span>
+                  <span class="mapNode__text">Teaching</span>
+                </button>
               </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Attack surface</div>
-                <div class="snapVal">user-controlled buffers + insufficient validation</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Method</div>
-                <div class="snapVal">trace → reconstruct control-flow → craft primitives</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Payload</div>
-                <div class="snapVal">iterative overwrite with guard condition mapping</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Findings</div>
-                <div class="snapVal">primitive reliability depends on layout determinism</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Mitigation</div>
-                <div class="snapVal">strict size/offset checks + hardened parsing</div>
+              <div class="systemsMap__edges" aria-hidden="true">
+                <span class="edge edge--1">→</span>
+                <span class="edge edge--2">→</span>
+                <span class="edge edge--3">↘</span>
+                <span class="edge edge--4">↙</span>
               </div>
             </div>
+          </div>
 
-            <div class="project__actions">
-              <button class="btn btn--ghost" type="button" data-toggle="details-1">Toggle technical notes</button>
-              <span class="muted mono" data-note-1 hidden>
-                notes: validate assumptions at each boundary; keep an evidence ledger.
-              </span>
-            </div>
-          </article>
+          <div class="projectsNav__right" aria-label="Sub-categories">
+            <div class="projectsNav__panelTitle mono">sub-category</div>
+            <div id="subCategoryList" class="subCats" role="list"></div>
+          </div>
+        </div>
 
-          <article class="project" data-project>
-            <div class="project__top">
-              <div>
-                <div class="project__eyebrow mono">snapshot-02</div>
-                <h3 class="project__title">Heap shape manipulation (use-after-free)</h3>
-              </div>
-              <div class="project__severity project__severity--alt">impact: high</div>
-            </div>
-
-            <div class="snapshot">
-              <div class="snapRow">
-                <div class="snapKey mono">Context</div>
-                <div class="snapVal">Lifetime mismatch inside a request handling path</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Attack surface</div>
-                <div class="snapVal">concurrent triggers + predictable allocator behavior</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Method</div>
-                <div class="snapVal">instrument → observe allocator states → synchronize triggers</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Payload</div>
-                <div class="snapVal">object reclaim with controlled metadata overwrite</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Findings</div>
-                <div class="snapVal">exploitability depends on precise timing windows</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Mitigation</div>
-                <div class="snapVal">ownership enforcement + safe reference patterns</div>
-              </div>
-            </div>
-
-            <div class="project__actions">
-              <button class="btn btn--ghost" type="button" data-toggle="details-2">Toggle technical notes</button>
-              <span class="muted mono" data-note-2 hidden>
-                notes: model allocator behavior; treat timing as an engineering constraint.
-              </span>
-            </div>
-          </article>
-
-          <article class="project" data-project>
-            <div class="project__top">
-              <div>
-                <div class="project__eyebrow mono">snapshot-03</div>
-                <h3 class="project__title">Firmware parser confusion (logic flaw chain)</h3>
-              </div>
-              <div class="project__severity project__severity--red">impact: medium</div>
-            </div>
-
-            <div class="snapshot">
-              <div class="snapRow">
-                <div class="snapKey mono">Context</div>
-                <div class="snapVal">Chained parsing across layers of validation</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Attack surface</div>
-                <div class="snapVal">crafted inputs reaching inconsistent state machines</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Method</div>
-                <div class="snapVal">reverse state transitions → constrain grammar → prove reachability</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Payload</div>
-                <div class="snapVal">grammar-compliant confusion driving unsafe branch selection</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Findings</div>
-                <div class="snapVal">defense-in-depth fails when assumptions diverge</div>
-              </div>
-              <div class="snapRow">
-                <div class="snapKey mono">Mitigation</div>
-                <div class="snapVal">unify validation logic + strengthen state invariants</div>
-              </div>
-            </div>
-
-            <div class="project__actions">
-              <button class="btn btn--ghost" type="button" data-toggle="details-3">Toggle technical notes</button>
-              <span class="muted mono" data-note-3 hidden>
-                notes: align invariants across layers; if states disagree, the system is at risk.
-              </span>
-            </div>
-          </article>
+        <div id="projectsResults" class="projectsResults" aria-live="polite">
+          <div class="projectGrid" id="projectGrid"></div>
         </div>
       </div>
     </section>
