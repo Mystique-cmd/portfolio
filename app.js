@@ -51,15 +51,15 @@
     const text = isHex ? randHex(12 + ((Math.random() * 10) | 0)) : LINES[(Math.random() * LINES.length) | 0];
     const hue = variant < 0.55 ? 196 : variant < 0.82 ? 274 : 343;
 
-    return {
+  return {
       x: col,
       y: row,
       speed,
       size,
       text,
       hue,
-      alpha: 0.25 + Math.random() * 0.35,
-      wobble: (Math.random() * 2 - 1) * 0.8,
+      alpha: 0.12 + Math.random() * 0.20,
+      wobble: (Math.random() * 2 - 1) * 0.75,
       phase: Math.random() * Math.PI * 2,
     };
   }
@@ -69,7 +69,7 @@
     state.glyphs = [];
     const w = window.innerWidth;
     const h = window.innerHeight;
-    const count = Math.round((w * h) / 42000); // density scaling
+    const count = Math.round((w * h) / 65000); // density scaling (reduced for less visual noise)
     for (let i = 0; i < count; i++) state.glyphs.push(makeGlyph(w, h));
   }
 
@@ -80,8 +80,8 @@
     const h = window.innerHeight;
     state.t += 1;
 
-    // Clear with slight alpha for trailing effect
-    ctx.fillStyle = 'rgba(3,4,14,0.18)';
+    // Clear with heavier alpha so the trail doesn't overpower content
+    ctx.fillStyle = 'rgba(3,4,14,0.32)';
     ctx.fillRect(0, 0, w, h);
 
     for (const g of state.glyphs) {
@@ -108,9 +108,11 @@
       ctx.globalAlpha = g.alpha;
       ctx.font = `600 ${g.size}px ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace`;
       ctx.fillStyle = `hsla(${g.hue}, 95%, 70%, 0.95)`;
-      ctx.shadowColor = `hsla(${g.hue}, 95%, 60%, 0.55)`;
-      ctx.shadowBlur = 18;
+      ctx.shadowColor = `hsla(${g.hue}, 95%, 60%, 0.28)`;
+
+      ctx.shadowBlur = 12;
       ctx.fillText(g.text, g.x, g.y);
+
       ctx.restore();
     }
 

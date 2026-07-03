@@ -44,8 +44,10 @@ body{
   height:100vh;
   z-index:-1;
   pointer-events:none;
-  opacity:.92;
+  opacity:.55;
+  filter: saturate(.85) blur(.2px);
 }
+
 
 .skip{
   position:absolute;
