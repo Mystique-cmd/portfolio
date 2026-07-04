@@ -168,6 +168,7 @@
   const PROJECT_CATALOG = [
     {
       id: 'snapshot-01',
+
       intent: 'Academic',
       subCategory: 'Algorithms',
       title: 'Kernel boundary desync (write-what-where)',
@@ -243,6 +244,196 @@
     return '';
   }
 
+  // ===== Gallery (deployed + GitHub) view =====
+  const PROJECT_GALLERY_CATALOG = [
+    {
+      id: 'gallery-01',
+      intent: 'Academic',
+      subCategory: 'Algorithms',
+      title: 'Low-level Systems Profiler',
+      description:
+        'A local-first profiler that traces hot paths and dataflow boundaries with minimal overhead.',
+      deployedUrl: 'https://example.com/deployed/systems-profiler',
+      githubUrl: 'https://github.com/mystique/systems-profiler',
+      techTags: ['Tracing', 'Dataflow', 'Performance'],
+    },
+    {
+      id: 'gallery-02',
+      intent: 'Professional',
+      subCategory: 'Vulnerability Research',
+      title: 'Exploit Evidence Ledger',
+      description:
+        'Workflow for keeping a reproducible evidence chain: inputs → states → observed behavior → mitigations.',
+      deployedUrl: 'https://example.com/deployed/evidence-ledger',
+      githubUrl: 'https://github.com/mystique/evidence-ledger',
+      techTags: ['RE', 'Reproducibility', 'Reporting'],
+    },
+    {
+      id: 'gallery-03',
+      intent: 'Teaching & Narrative',
+      subCategory: 'Write-ups',
+      title: 'Firmware Parser Playground',
+      description:
+        'Interactive write-up companion that visualizes state machines and invariant checks for parser logic flaws.',
+      deployedUrl: 'https://example.com/deployed/parser-playground',
+      githubUrl: 'https://github.com/mystique/parser-playground',
+      techTags: ['State Machines', 'Invariants', 'Visualization'],
+    },
+    {
+      id: 'gallery-04',
+      intent: 'Experimental',
+      subCategory: 'Grammar/Parser Prototypes',
+      title: 'Grammar Fuzzer Harness',
+      description:
+        'Small harness that mutates grammars and reports divergence between expected and observed parse states.',
+      deployedUrl: 'https://example.com/deployed/grammar-fuzzer',
+      githubUrl: 'https://github.com/mystique/grammar-fuzzer',
+      techTags: ['Fuzzing', 'Parsing', 'Differential'],
+    },
+    {
+      id: 'gallery-05',
+      intent: 'Personal',
+      subCategory: 'Utility Scripts',
+      title: 'Recon Batch Toolkit',
+      description:
+        'Opinionated shell toolkit for structuring reconnaissance runs and output archives.',
+      deployedUrl: 'https://example.com/deployed/recon-toolkit',
+      githubUrl: 'https://github.com/mystique/recon-toolkit',
+      techTags: ['Automation', 'CLI', 'Archiving'],
+    },
+  ];
+
+  function setView({ view, transition }) {
+    const projectsSection = document.getElementById('projects');
+    const gallerySection = document.getElementById('projectsGallery');
+
+    if (!projectsSection || !gallerySection) return;
+
+    const goingOut = transition === 'out' && view === 'gallery';
+    const goingIn = transition === 'in' && view === 'gallery';
+
+    if (goingOut) {
+      projectsSection.classList.add('pageView');
+      projectsSection.dataset.transition = 'out';
+    }
+
+    if (view === 'gallery') {
+      // Hide projects, show gallery
+      gallerySection.hidden = false;
+      requestAnimationFrame(() => {
+        gallerySection.classList.add('pageView--active');
+        gallerySection.classList.remove('pageView--inactive');
+        gallerySection.dataset.transition = 'in';
+        projectsSection.hidden = true;
+      });
+    } else {
+      // Show projects, hide gallery
+      gallerySection.dataset.transition = 'out';
+      gallerySection.classList.remove('pageView--active');
+      gallerySection.hidden = true;
+      projectsSection.hidden = false;
+    }
+  }
+
+  function openGallery({ intent, subCategory }) {
+    const projectsSection = document.getElementById('projects');
+    const gallerySection = document.getElementById('projectsGallery');
+    const grid = document.getElementById('galleryGrid');
+    const filter = document.getElementById('galleryFilter');
+    const desc = document.getElementById('gallery-desc');
+
+    if (!projectsSection || !gallerySection || !grid || !filter) return;
+
+    // Update header
+    const hasSub = Boolean(subCategory);
+    filter.textContent = hasSub ? `${intent} / ${subCategory}` : `${intent}`;
+    if (desc) {
+      desc.textContent = hasSub
+        ? 'Deployed links and GitHub captures for the selected intent + sub-category.'
+        : 'Deployed links and GitHub captures for the selected intent.';
+    }
+
+    // Render cards
+    grid.innerHTML = '';
+    const items = PROJECT_GALLERY_CATALOG.filter((p) => p.intent === intent && (!subCategory || p.subCategory === subCategory));
+
+    if (!items.length) {
+      const empty = document.createElement('div');
+      empty.className = 'card';
+      empty.innerHTML = `
+        <h3 class="card__title mono" style="margin-bottom:6px">no captures</h3>
+        <p class="card__body">No deployed/GitHub projects mapped into this sub-category yet.</p>
+      `;
+      grid.appendChild(empty);
+    } else {
+      items.forEach((p) => {
+        const el = document.createElement('article');
+        el.className = 'projectLinkCard';
+        el.setAttribute('data-gallery-item', '');
+
+        const tagsHtml = (p.techTags || [])
+          .map((t) => `<span class="outcomeTag ${outcomeTagClass(t)}">${escapeHtml(t)}</span>`)
+          .join('');
+
+        el.innerHTML = `
+          <h3 class="projectLinkCard__title">${escapeHtml(p.title)}</h3>
+          <p class="projectLinkCard__desc">${escapeHtml(p.description)}</p>
+
+          <div class="projectMetaRow" aria-label="Gallery metadata">
+            <span class="metaBadge metaBadge--intent">${escapeHtml(p.intent)}</span>
+            <span class="metaBadge metaBadge--sub">${escapeHtml(p.subCategory)}</span>
+          </div>
+
+          <div class="outcomeTags" aria-label="Tech tags">${tagsHtml}</div>
+
+          <div class="projectLinkRow">
+            <a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noreferrer">
+              <span class="projectLink__icon">↗</span>
+              Deployed
+            </a>
+            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noreferrer">
+              <span class="projectLink__icon">⌁</span>
+              GitHub
+            </a>
+          </div>
+        `;
+
+        grid.appendChild(el);
+      });
+    }
+
+    // View switch
+    projectsSection.hidden = true;
+    gallerySection.hidden = false;
+    // Ensure animation triggers
+    gallerySection.classList.remove('pageView--active');
+    gallerySection.dataset.transition = 'in';
+    requestAnimationFrame(() => {
+      gallerySection.classList.add('pageView--active');
+    });
+
+    // Scroll to top of gallery
+    gallerySection.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+  }
+
+  function initGallery() {
+    const backBtn = document.getElementById('galleryBack');
+    if (!backBtn) return;
+
+    backBtn.addEventListener('click', () => {
+      const projectsSection = document.getElementById('projects');
+      const gallerySection = document.getElementById('projectsGallery');
+      if (!projectsSection || !gallerySection) return;
+
+      gallerySection.classList.remove('pageView--active');
+      gallerySection.dataset.transition = 'out';
+      gallerySection.hidden = true;
+      projectsSection.hidden = false;
+      projectsSection.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'start' });
+    });
+  }
+
+  // ===== Intent/sub-category layered navigation =====
   function renderSubCategories(intent) {
     const el = document.getElementById('subCategoryList');
     if (!el) return;
@@ -289,6 +480,9 @@
         el.querySelectorAll('[aria-current="true"]').forEach((b) => b.setAttribute('aria-current', 'false'));
         btn.setAttribute('aria-current', 'true');
         renderProjects({ intent, subCategory: sub });
+
+        // open gallery (page-like view)
+        openGallery({ intent, subCategory: sub });
       });
 
       el.appendChild(btn);
@@ -381,11 +575,13 @@
 
 
 
+
   function initProjectsNav() {
     const intentButtons = document.querySelectorAll('.navNode[data-intent]');
     const mapButtons = document.querySelectorAll('.mapNode[data-map]');
 
     if (!intentButtons.length) return;
+
 
     function setIntent(intent) {
       // intent selector state
@@ -415,8 +611,8 @@
     setIntent('Academic');
   }
 
-
   // ===== Contact form (mailto simulation) =====
+
   function initContact() {
     const form = document.getElementById('contactForm');
     const status = document.getElementById('formStatus');
@@ -506,6 +702,8 @@
     initYear();
     initSkills();
     initProjects();
+    initGallery();
+    initProjectsNav();
     initContact();
     initTilt();
 

@@ -542,8 +542,97 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
 .skillCard:hover::after{opacity:1}
 
 /* Responsive */
-/* ===== Projects layered navigation + systems map ===== */
+/* ===== Projects layered navigation + systems map + gallery view ===== */
+
+/* Page-view toggling + systems-themed transition */
+.pageView{
+  display:block;
+  opacity:0;
+  transform: scale(.985);
+  filter: blur(6px) saturate(.85);
+  pointer-events:none;
+  transition: opacity .35s ease, transform .45s ease, filter .45s ease;
+  position:relative;
+}
+.pageView.pageView--active{
+  opacity:1;
+  transform: scale(1);
+  filter: blur(0) saturate(1);
+  pointer-events:auto;
+}
+
+/* A subtle “low-level trace” overlay for transitions */
+.pageView[data-transition="out"]::after,
+.pageView[data-transition="in"]::after{
+  content:"";
+  position:absolute;
+  inset:-2px;
+  border-radius: 26px;
+  pointer-events:none;
+  background:
+    linear-gradient(90deg, transparent, rgba(56,246,255,.10), transparent),
+    repeating-linear-gradient(0deg, rgba(255,255,255,.06), rgba(255,255,255,0) 2px, rgba(0,0,0,0) 4px);
+  opacity:0;
+  mix-blend-mode: screen;
+}
+.pageView[data-transition="in"]::after{
+  opacity:1;
+  animation: traceScan .9s ease both;
+}
+@keyframes traceScan{
+  0%{transform: translateY(10px) scale(1.02); filter: blur(10px);}
+  35%{transform: translateY(0) scale(1); filter: blur(3px);}
+  100%{transform: translateY(0) scale(1); filter: blur(0); opacity:.45;}
+}
+
+/* Optional glitch micro-jitter */
+@media (prefers-reduced-motion: no-preference){
+  .pageView[data-transition="in"]{ animation: jitterIn .9s ease both; }
+  @keyframes jitterIn{
+    0%{ transform: scale(.99) translate3d(0,0,0); }
+    28%{ transform: scale(1) translate3d(0,-2px,0); }
+    55%{ transform: scale(1) translate3d(0,1px,0); }
+    100%{ transform: scale(1) translate3d(0,0,0); }
+  }
+}
+
+.galleryTopBar{
+  display:flex;
+  gap:12px;
+  align-items:center;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  margin-top:8px;
+  margin-bottom:10px;
+}
+.galleryFilter{
+  color: rgba(215,221,255,.72);
+  font-size:13px;
+  border:1px solid rgba(122,131,255,.16);
+  background: rgba(12,14,34,.14);
+  padding:10px 12px;
+  border-radius: 14px;
+}
+
+.projectLinkCard{
+  padding:18px;
+  border-radius: var(--radius2);
+  border:1px solid rgba(122,131,255,.18);
+  background: rgba(12,14,34,.20);
+  transition: transform .18s ease, border-color .18s ease;
+}
+.projectLinkCard:hover{transform: translateY(-3px); border-color: rgba(56,246,255,.30)}
+.projectLinkCard__title{margin:0; font-size:16px; line-height:1.35; font-weight:900}
+.projectLinkCard__desc{margin:10px 0 0; color: var(--muted); line-height:1.65; font-size:14px}
+.projectLinkRow{display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;}
+.projectLink{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 12px; border-radius: 14px; text-decoration:none; font-weight:900; border:1px solid rgba(122,131,255,.18); background: rgba(0,0,0,.10); color: rgba(215,221,255,.88)}
+.projectLink:hover{border-color: rgba(56,246,255,.32)}
+.projectLink__icon{font-family:var(--mono)}
+
+#projectsResults, #galleryResults{ scroll-margin-top: 96px; }
+
 .projectsNav{
+
   display:grid;
   grid-template-columns: 1fr 1.1fr 1fr;
   gap:16px;

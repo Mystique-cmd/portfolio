@@ -321,6 +321,29 @@
       </div>
     </section>
 
+    <!-- PROJECT GALLERY VIEW (separate page-like container) -->
+    <section class="section pageView" id="projectsGallery" aria-labelledby="gallery-title" hidden>
+      <div class="container section__inner">
+        <div class="sectionHeader">
+          <div class="sectionHeader__tag">/projects/gallery</div>
+          <h2 id="gallery-title">Deployed &amp; GitHub captures</h2>
+          <p class="sectionHeader__desc" id="gallery-desc">
+            Select an intent + sub-category to load deployed links and repository cards.
+          </p>
+        </div>
+
+        <div class="galleryTopBar">
+          <button class="btn btn--ghost" type="button" id="galleryBack">← Back to system map</button>
+          <div class="galleryFilter mono" id="galleryFilter" aria-label="Gallery filter"></div>
+        </div>
+
+        <div id="galleryResults" class="projectsResults" aria-live="polite">
+          <div class="projectGrid" id="galleryGrid"></div>
+        </div>
+      </div>
+    </section>
+
+
     <!-- PHILOSOPHY -->
     <section class="section" id="philosophy" aria-labelledby="philosophy-title">
       <div class="container section__inner">
