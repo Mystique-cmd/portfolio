@@ -244,11 +244,11 @@
           <div class="sectionHeader__tag">/projects</div>
           <h2 id="projects-title">System snapshots</h2>
           <p class="sectionHeader__desc">
-            Intent-first traversal. Systems map: Academic → Professional → Personal/Experimental → Teaching &amp; Narrative.
+            Intent-first traversal. Click an intent to load deployed + GitHub project cards.
           </p>
         </div>
 
-        <!-- Layered navigation: intent → sub-category → project cards -->
+
         <div class="projectsNav">
           <div class="projectsNav__left" aria-label="Intent categories">
             <div class="projectsNav__panelTitle mono">intent</div>
@@ -308,37 +308,10 @@
               </div>
             </div>
           </div>
-
-          <div class="projectsNav__right" aria-label="Sub-categories">
-            <div class="projectsNav__panelTitle mono">sub-category</div>
-            <div id="subCategoryList" class="subCats" role="list"></div>
-          </div>
         </div>
 
         <div id="projectsResults" class="projectsResults" aria-live="polite">
           <div class="projectGrid" id="projectGrid"></div>
-        </div>
-      </div>
-    </section>
-
-    <!-- PROJECT GALLERY VIEW (separate page-like container) -->
-    <section class="section pageView" id="projectsGallery" aria-labelledby="gallery-title" hidden>
-      <div class="container section__inner">
-        <div class="sectionHeader">
-          <div class="sectionHeader__tag">/projects/gallery</div>
-          <h2 id="gallery-title">Deployed &amp; GitHub captures</h2>
-          <p class="sectionHeader__desc" id="gallery-desc">
-            Select an intent + sub-category to load deployed links and repository cards.
-          </p>
-        </div>
-
-        <div class="galleryTopBar">
-          <button class="btn btn--ghost" type="button" id="galleryBack">← Back to system map</button>
-          <div class="galleryFilter mono" id="galleryFilter" aria-label="Gallery filter"></div>
-        </div>
-
-        <div id="galleryResults" class="projectsResults" aria-live="polite">
-          <div class="projectGrid" id="galleryGrid"></div>
         </div>
       </div>
     </section>
@@ -498,4 +471,5 @@
   <script src="app.js" defer></script>
 </body>
 </html>
+
 
