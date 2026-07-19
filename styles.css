@@ -44,9 +44,21 @@ body{
   height:100vh;
   z-index:-1;
   pointer-events:none;
-  opacity:.55;
-  filter: saturate(.85) blur(.2px);
+  /* Reduce background noise so foreground UI is more readable */
+  opacity:.30;
+  filter: saturate(.75) blur(.35px);
 }
+
+/* Darker scrim to keep text contrast high */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  z-index:-1;
+  pointer-events:none;
+  background: rgba(0,0,0,.35);
+}
+
 
 
 .skip{
@@ -544,6 +556,7 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
 /* Responsive */
 /* ===== Projects layered navigation + systems map + gallery view ===== */
 
+
 /* Page-view toggling + systems-themed transition */
 .pageView{
   display:block;
@@ -711,6 +724,110 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
 .subCatBtn__count{color: rgba(215,221,255,.55); font-size:12px; font-family:var(--mono)}
 
 .projectsResults{margin-top:16px;}
+
+/* ===== Projects carousel + cascade ===== */
+.projectsCarousel{
+  width:100%;
+}
+
+.projectsCarousel__head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  margin-bottom:10px;
+}
+
+.projectsCarousel__controls{
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+.carouselBtn{
+  width:42px;
+  height:42px;
+  border-radius: 14px;
+  border:1px solid rgba(122,131,255,.18);
+  background: rgba(12,14,34,.22);
+  color: rgba(215,221,255,.88);
+  cursor:pointer;
+  font-weight:900;
+  transition: transform .18s ease, border-color .18s ease;
+}
+.carouselBtn:hover{transform: translateY(-2px); border-color: rgba(56,246,255,.32)}
+.carouselBtn:disabled{opacity:.45; cursor:not-allowed; transform:none}
+
+.projectsCarousel__viewport{
+  overflow:hidden;
+  border-radius: var(--radius2);
+  border:1px solid rgba(122,131,255,.16);
+  background: rgba(12,14,34,.14);
+  padding:14px 14px;
+}
+
+.projectsCarousel__track{
+  display:flex;
+  align-items:stretch;
+  gap:14px;
+  will-change: transform;
+  transition: transform .36s ease;
+}
+
+.projectsCarousel__slide{
+  flex: 0 0 calc((100% - 28px) / 2); /* overwritten by media queries */
+  animation: none;
+}
+
+@media (max-width: 520px){
+  .projectsCarousel__slide{flex: 0 0 100%;}
+}
+@media (min-width: 521px) and (max-width: 919px){
+  .projectsCarousel__slide{flex: 0 0 calc((100% - 14px) / 2);}
+}
+@media (min-width: 920px){
+  .projectsCarousel__slide{flex: 0 0 calc((100% - 28px) / 3);}
+}
+
+
+.projectsCarousel__dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-top:12px;
+}
+
+.carouselDot{
+  width:12px;
+  height:12px;
+  border-radius:999px;
+  border:1px solid rgba(122,131,255,.20);
+  background: rgba(12,14,34,.22);
+  color:transparent;
+  cursor:pointer;
+  transition: transform .18s ease, border-color .18s ease, background .18s ease;
+}
+.carouselDot:hover{transform: translateY(-1px); border-color: rgba(56,246,255,.35)}
+.carouselDot[aria-current="true"]{
+  background: linear-gradient(135deg, rgba(56,246,255,.35), rgba(168,85,247,.18));
+  border-color: rgba(56,246,255,.45);
+}
+
+@keyframes projectsCascade{
+  0%{opacity:0; transform: translateY(10px) scale(.98); filter: blur(6px)}
+  100%{opacity:1; transform: translateY(0) scale(1); filter: blur(0)}
+}
+
+/* Make carousel link cards blend with the carousel container */
+.projectLinkCard{height:100%;}
+
+.projectLinkCard__top{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
+
+.projectsCarousel__hint{
+  font-size:12px;
+  color: rgba(215,221,255,.60);
+}
+
 
 /* Systems map */
 .systemsMap{

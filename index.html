@@ -311,8 +311,23 @@
         </div>
 
         <div id="projectsResults" class="projectsResults" aria-live="polite">
-          <div class="projectGrid" id="projectGrid"></div>
+          <div class="projectsCarousel" data-projects-carousel>
+            <div class="projectsCarousel__head">
+              <div class="projectsCarousel__hint mono">intent → captures</div>
+              <div class="projectsCarousel__controls" aria-label="Carousel controls">
+                <button class="carouselBtn" type="button" data-carousel-prev aria-label="Previous">←</button>
+                <button class="carouselBtn" type="button" data-carousel-next aria-label="Next">→</button>
+              </div>
+            </div>
+
+            <div class="projectsCarousel__viewport" aria-live="polite">
+              <div class="projectsCarousel__track" data-carousel-track></div>
+            </div>
+
+            <div class="projectsCarousel__dots" data-carousel-dots aria-label="Carousel position"></div>
+          </div>
         </div>
+
       </div>
     </section>
 

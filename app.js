@@ -246,6 +246,7 @@
 
   // ===== Gallery (deployed + GitHub) view =====
   const PROJECT_GALLERY_CATALOG = [
+
     {
       id: 'gallery-01',
       intent: 'Academic',
@@ -496,71 +497,267 @@
   }
 
   function renderProjects({ intent, subCategory }) {
-    const grid = document.getElementById('projectGrid');
-    if (!grid) return;
-    grid.innerHTML = '';
+    const track = document.querySelector('[data-carousel-track]');
+    const resultsRoot = document.getElementById('projectsResults');
+    if (!track || !resultsRoot) return;
 
-    const projects = PROJECT_CATALOG.filter((p) => p.intent === intent && (!subCategory || p.subCategory === subCategory));
+    const items = PROJECT_GALLERY_CATALOG.filter(
+      (p) => p.intent === intent && (!subCategory || p.subCategory === subCategory)
+    );
 
-    if (!projects.length) {
-      const empty = document.createElement('div');
-      empty.className = 'card';
-      empty.innerHTML = `<h3 class="card__title mono" style="margin-bottom:6px">no projects</h3><p class="card__body">No snapshots mapped into this sub-category yet.</p>`;
-      grid.appendChild(empty);
+    track.innerHTML = '';
+
+    if (!items.length) {
+      const el = document.createElement('article');
+      el.className = 'projectsCarousel__slide';
+      el.innerHTML = `
+        <div class="projectLinkCard">
+          <h3 class="projectLinkCard__title mono" style="margin-bottom:6px">no captures</h3>
+          <p class="projectLinkCard__desc">No deployed/GitHub projects mapped into this sub-category yet.</p>
+        </div>
+      `;
+      track.appendChild(el);
+      triggerCarouselCascade(track);
+      resetCarousel();
       return;
     }
 
-    projects.forEach((p, i) => {
-      const idx = String(i + 1);
-      const article = document.createElement('article');
-      article.className = 'project';
-      article.setAttribute('data-project', '');
+    items.forEach((p) => {
+      const slide = document.createElement('article');
+      slide.className = 'projectsCarousel__slide';
+      slide.setAttribute('data-slide', '');
 
-      const severityClass = p.severity?.className || '';
-
-      const outcomeTagsHtml = (p.outcomeTags || [])
+      const tagsHtml = (p.techTags || [])
         .map((t) => `<span class="outcomeTag ${outcomeTagClass(t)}">${escapeHtml(t)}</span>`)
         .join('');
 
-      article.innerHTML = `
-        <div class="project__top">
-          <div>
-            <div class="project__eyebrow mono">${escapeHtml(p.id)}</div>
-            <h3 class="project__title">${escapeHtml(p.title)}</h3>
+      slide.innerHTML = `
+        <div class="projectLinkCard" tabindex="0">
+          <div class="projectLinkCard__top">
+            <h3 class="projectLinkCard__title">${escapeHtml(p.title)}</h3>
           </div>
-          <div class="project__severity ${severityClass}">impact: ${escapeHtml(p.severity?.kind || '')}</div>
-        </div>
 
-        <div class="projectMetaRow" aria-label="Project classification">
-          <span class="metaBadge metaBadge--intent">${escapeHtml(p.intent)}</span>
-          <span class="metaBadge metaBadge--sub">${escapeHtml(p.subCategory)}</span>
-        </div>
+          <p class="projectLinkCard__desc">${escapeHtml(p.description)}</p>
 
-        <div class="outcomeTags" aria-label="Outcome tags">${outcomeTagsHtml}</div>
+          <div class="projectMetaRow" aria-label="Project classification">
+            <span class="metaBadge metaBadge--intent">${escapeHtml(p.intent)}</span>
+            <span class="metaBadge metaBadge--sub">${escapeHtml(p.subCategory)}</span>
+          </div>
 
-        <div class="snapshot">
-          ${p.snapshotRows
-            .map(
-              (row) => `
-              <div class="snapRow">
-                <div class="snapKey mono">${escapeHtml(row[0])}</div>
-                <div class="snapVal">${escapeHtml(row[1])}</div>
-              </div>
-            `
-            )
-            .join('')}
-        </div>
+          <div class="outcomeTags" aria-label="Tech tags">${tagsHtml}</div>
 
-        <div class="project__actions">
-          <button class="btn btn--ghost" type="button" data-toggle="details-${idx}">Toggle technical notes</button>
-          <span class="muted mono" data-note-${idx} hidden>
-            ${escapeHtml(p.notes)}
-          </span>
+          <div class="projectLinkRow">
+            <a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noreferrer" aria-label="Open deployed project">
+              <span class="projectLink__icon">↗</span>
+              Deployed
+            </a>
+            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noreferrer" aria-label="Open GitHub repository">
+              <span class="projectLink__icon">⌁</span>
+              GitHub
+            </a>
+          </div>
         </div>
       `;
 
-      grid.appendChild(article);
+      track.appendChild(slide);
     });
+
+    triggerCarouselCascade(track);
+    resetCarousel();
+  }
+
+  function triggerCarouselCascade(track) {
+    const slides = track.querySelectorAll('[data-slide]');
+    slides.forEach((s, i) => {
+      s.style.animation = 'none';
+      // force reflow
+      // eslint-disable-next-line no-unused-expressions
+      s.offsetHeight;
+      const delay = Math.min(220, i * 70);
+      s.style.animation = `projectsCascade .42s ease both`;
+      s.style.animationDelay = `${delay}ms`;
+    });
+  }
+
+  function getCarousel() {
+    const root = document.querySelector('[data-projects-carousel]');
+    const viewport = root?.querySelector('.projectsCarousel__viewport');
+    const track = root?.querySelector('[data-carousel-track]');
+    const prevBtn = root?.querySelector('[data-carousel-prev]');
+    const nextBtn = root?.querySelector('[data-carousel-next]');
+    const dots = root?.querySelector('[data-carousel-dots]');
+    return { root, viewport, track, prevBtn, nextBtn, dots };
+  }
+
+  let carouselState = {
+    index: 0,
+    slidesPerView: 2,
+    pageSize: 2,
+  };
+
+  function computeSlidesPerView() {
+    const { viewport } = getCarousel();
+    const w = viewport?.getBoundingClientRect()?.width || window.innerWidth;
+    if (w < 520) return 1;
+    if (w < 920) return 2;
+    return 3;
+  }
+
+  function resetCarousel() {
+    const { track, dots, prevBtn, nextBtn } = getCarousel();
+    if (!track) return;
+
+    carouselState.slidesPerView = computeSlidesPerView();
+    carouselState.index = 0;
+
+    const slides = Array.from(track.querySelectorAll('[data-slide]'));
+    const total = slides.length;
+    const pageSize = carouselState.slidesPerView;
+    carouselState.pageSize = pageSize;
+
+    const maxIndex = Math.max(0, total - pageSize);
+    carouselState.index = Math.min(carouselState.index, maxIndex);
+
+    // card sizing: use flex-basis from CSS; we just set track transform
+    updateCarouselTransform();
+    renderCarouselDots();
+
+    if (prevBtn) prevBtn.disabled = carouselState.index <= 0;
+    if (nextBtn) nextBtn.disabled = carouselState.index >= maxIndex;
+
+    // enable drag snapping later if needed
+  }
+
+  function updateCarouselTransform() {
+    const { track, viewport } = getCarousel();
+    if (!track || !viewport) return;
+
+    const styles = window.getComputedStyle(track);
+    const slide = track.querySelector('[data-slide]');
+    const slideRect = slide?.getBoundingClientRect();
+    const viewportRect = viewport.getBoundingClientRect();
+    if (!slideRect || !viewportRect) return;
+
+    const slideWidth = slideRect.width;
+
+    // we translate by index * slideWidth (since slides are laid horizontally)
+    const x = -carouselState.index * slideWidth;
+    track.style.transform = `translate3d(${x}px,0,0)`;
+  }
+
+  function renderCarouselDots() {
+    const { dots, track } = getCarousel();
+    if (!dots || !track) return;
+
+    const slides = Array.from(track.querySelectorAll('[data-slide]'));
+    const total = slides.length;
+    const perView = carouselState.slidesPerView;
+    const pages = Math.max(1, Math.ceil(total / perView));
+
+    dots.innerHTML = '';
+
+    for (let i = 0; i < pages; i++) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'carouselDot';
+      btn.setAttribute('aria-label', `Go to page ${i + 1}`);
+      btn.setAttribute('aria-current', 'false');
+      btn.dataset.page = String(i);
+      btn.textContent = '•';
+
+      const currentPage = Math.floor(carouselState.index / perView);
+      if (i === currentPage) btn.setAttribute('aria-current', 'true');
+
+      btn.addEventListener('click', () => {
+        carouselState.index = i * perView;
+        updateCarouselTransform();
+        renderCarouselDots();
+        const maxIndex = Math.max(0, total - perView);
+        const { prevBtn, nextBtn } = getCarousel();
+        if (prevBtn) prevBtn.disabled = carouselState.index <= 0;
+        if (nextBtn) nextBtn.disabled = carouselState.index >= maxIndex;
+      });
+
+      dots.appendChild(btn);
+    }
+  }
+
+  function initCarouselControls() {
+    const { root, prevBtn, nextBtn, viewport } = getCarousel();
+    if (!root) return;
+
+    if (prevBtn) {
+      prevBtn.addEventListener('click', () => {
+        const slides = root.querySelectorAll('[data-slide]');
+        const perView = carouselState.slidesPerView;
+        const maxIndex = Math.max(0, slides.length - perView);
+        carouselState.index = Math.max(0, carouselState.index - perView);
+        carouselState.index = Math.min(carouselState.index, maxIndex);
+        updateCarouselTransform();
+        renderCarouselDots();
+        if (prevBtn) prevBtn.disabled = carouselState.index <= 0;
+        if (nextBtn) nextBtn.disabled = carouselState.index >= maxIndex;
+      });
+    }
+
+    if (nextBtn) {
+      nextBtn.addEventListener('click', () => {
+        const slides = root.querySelectorAll('[data-slide]');
+        const perView = carouselState.slidesPerView;
+        const maxIndex = Math.max(0, slides.length - perView);
+        carouselState.index = Math.min(maxIndex, carouselState.index + perView);
+        updateCarouselTransform();
+        renderCarouselDots();
+        if (prevBtn) prevBtn.disabled = carouselState.index <= 0;
+        if (nextBtn) nextBtn.disabled = carouselState.index >= maxIndex;
+      });
+    }
+
+    // keyboard for accessibility
+    root.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') prevBtn?.click();
+      if (e.key === 'ArrowRight') nextBtn?.click();
+    });
+
+    // respond to resize
+    window.addEventListener('resize', () => {
+      // If slides exist, re-init sizes and transform
+      if (!root.querySelector('[data-slide]')) return;
+      resetCarousel();
+    });
+
+    // Basic swipe/drag (pointer)
+    let startX = 0;
+    let dragging = false;
+    let pointerId = null;
+
+    if (viewport) {
+      viewport.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        dragging = true;
+        pointerId = e.pointerId;
+        startX = e.clientX;
+        viewport.setPointerCapture(pointerId);
+      });
+
+      viewport.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+      });
+
+      viewport.addEventListener('pointerup', (e) => {
+        if (!dragging) return;
+        dragging = false;
+        const dx = e.clientX - startX;
+        const threshold = 45;
+        if (Math.abs(dx) < threshold) return;
+        if (dx > 0) prevBtn?.click();
+        else nextBtn?.click();
+      });
+
+      viewport.addEventListener('pointercancel', () => {
+        dragging = false;
+      });
+    }
   }
 
   function escapeHtml(s) {
@@ -580,7 +777,10 @@
     const intentButtons = document.querySelectorAll('.navNode[data-intent]');
     const mapButtons = document.querySelectorAll('.mapNode[data-map]');
 
+    initCarouselControls();
+
     if (!intentButtons.length) return;
+
 
 
     function setIntent(intent) {
