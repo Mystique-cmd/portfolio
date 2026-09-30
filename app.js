@@ -148,77 +148,41 @@
     });
   }
 
-  // ===== Project notes toggle (delegated, works with dynamic cards) =====
-  function initProjects() {
-    document.addEventListener('click', (e) => {
-      const btn = e.target?.closest?.('[data-toggle]');
-      if (!btn) return;
-      const id = btn.getAttribute('data-toggle');
-      if (!id) return;
-      const idx = id.split('-')[1];
-      const target = document.querySelector(`[data-note-${idx}]`);
-      if (!target) return;
-      const hidden = target.hasAttribute('hidden');
-      if (hidden) target.removeAttribute('hidden');
-      else target.setAttribute('hidden', '');
-    });
+  // ===== Intent/sub-category layered navigation =====
+  let projectCatalog = [];
+  let selectedIntent = 'Academic';
+  let selectedSubCategory = '';
+
+  function setProjectsStatus(message, state = '') {
+    const status = document.getElementById('projectsStatus');
+    if (!status) return;
+    status.textContent = message;
+    status.dataset.state = state;
   }
 
-  // ===== Intent/sub-category layered navigation =====
-  const PROJECT_CATALOG = [
-    {
-      id: 'snapshot-01',
-
-      intent: 'Academic',
-      subCategory: 'Algorithms',
-      title: 'Kernel boundary desync (write-what-where)',
-      severity: { kind: 'critical', className: '' },
-      snapshotRows: [
-        ['Context', 'State transitions across a privileged interface'],
-        ['Attack surface', 'user-controlled buffers + insufficient validation'],
-        ['Method', 'trace → reconstruct control-flow → craft primitives'],
-        ['Payload', 'iterative overwrite with guard condition mapping'],
-        ['Findings', 'primitive reliability depends on layout determinism'],
-        ['Mitigation', 'strict size/offset checks + hardened parsing'],
-      ],
-      notes: 'notes: validate assumptions at each boundary; keep an evidence ledger.',
-      outcomeTags: ['Research Prototype'],
-    },
-    {
-      id: 'snapshot-02',
-      intent: 'Professional',
-      subCategory: 'Vulnerability Research',
-      title: 'Heap shape manipulation (use-after-free)',
-      severity: { kind: 'high', className: 'project__severity--alt' },
-      snapshotRows: [
-        ['Context', 'Lifetime mismatch inside a request handling path'],
-        ['Attack surface', 'concurrent triggers + predictable allocator behavior'],
-        ['Method', 'instrument → observe allocator states → synchronize triggers'],
-        ['Payload', 'object reclaim with controlled metadata overwrite'],
-        ['Findings', 'exploitability depends on precise timing windows'],
-        ['Mitigation', 'ownership enforcement + safe reference patterns'],
-      ],
-      notes: 'notes: model allocator behavior; treat timing as an engineering constraint.',
-      outcomeTags: ['Production-ready'],
-    },
-    {
-      id: 'snapshot-03',
-      intent: 'Teaching & Narrative',
-      subCategory: 'Write-ups',
-      title: 'Firmware parser confusion (logic flaw chain)',
-      severity: { kind: 'medium', className: 'project__severity--red' },
-      snapshotRows: [
-        ['Context', 'Chained parsing across layers of validation'],
-        ['Attack surface', 'crafted inputs reaching inconsistent state machines'],
-        ['Method', 'reverse state transitions → constrain grammar → prove reachability'],
-        ['Payload', 'grammar-compliant confusion driving unsafe branch selection'],
-        ['Findings', 'defense-in-depth fails when assumptions diverge'],
-        ['Mitigation', 'unify validation logic + strengthen state invariants'],
-      ],
-      notes: 'notes: align invariants across layers; if states disagree, the system is at risk.',
-      outcomeTags: ['Learning Exercise'],
-    },
-  ];
+  async function loadGitHubProjects() {
+    setProjectsStatus('Loading GitHub repositories…', 'loading');
+    try {
+      const response = await fetch('/api/projects', { headers: { Accept: 'application/json' } });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);
+      projectCatalog = Array.isArray(payload) ? payload : (payload.projects || []);
+      if (payload.username) {
+        const profileLink = document.getElementById('githubProfileLink');
+        const profileLabel = document.getElementById('githubProfileLabel');
+        if (profileLink) {
+          profileLink.href = `https://github.com/${encodeURIComponent(payload.username)}`;
+          profileLink.hidden = false;
+        }
+        if (profileLabel) profileLabel.textContent = `github.com/${payload.username}`;
+      }
+      setProjectsStatus(`${projectCatalog.length} public repositories loaded${payload.username ? ` from @${payload.username}` : ''}.`, 'success');
+    } catch (error) {
+      projectCatalog = [];
+      setProjectsStatus(`GitHub projects could not be loaded: ${error.message} Start the portfolio server and configure a GitHub username.`, 'error');
+    }
+    renderSubCategories(selectedIntent);
+  }
 
   const INTENTS = [
     'Academic',
@@ -245,65 +209,6 @@
   }
 
   // ===== Gallery (deployed + GitHub) view =====
-  const PROJECT_GALLERY_CATALOG = [
-
-    {
-      id: 'gallery-01',
-      intent: 'Academic',
-      subCategory: 'Algorithms',
-      title: 'Low-level Systems Profiler',
-      description:
-        'A local-first profiler that traces hot paths and dataflow boundaries with minimal overhead.',
-      deployedUrl: 'https://example.com/deployed/systems-profiler',
-      githubUrl: 'https://github.com/mystique/systems-profiler',
-      techTags: ['Tracing', 'Dataflow', 'Performance'],
-    },
-    {
-      id: 'gallery-02',
-      intent: 'Professional',
-      subCategory: 'Vulnerability Research',
-      title: 'Exploit Evidence Ledger',
-      description:
-        'Workflow for keeping a reproducible evidence chain: inputs → states → observed behavior → mitigations.',
-      deployedUrl: 'https://example.com/deployed/evidence-ledger',
-      githubUrl: 'https://github.com/mystique/evidence-ledger',
-      techTags: ['RE', 'Reproducibility', 'Reporting'],
-    },
-    {
-      id: 'gallery-03',
-      intent: 'Teaching & Narrative',
-      subCategory: 'Write-ups',
-      title: 'Firmware Parser Playground',
-      description:
-        'Interactive write-up companion that visualizes state machines and invariant checks for parser logic flaws.',
-      deployedUrl: 'https://example.com/deployed/parser-playground',
-      githubUrl: 'https://github.com/mystique/parser-playground',
-      techTags: ['State Machines', 'Invariants', 'Visualization'],
-    },
-    {
-      id: 'gallery-04',
-      intent: 'Experimental',
-      subCategory: 'Grammar/Parser Prototypes',
-      title: 'Grammar Fuzzer Harness',
-      description:
-        'Small harness that mutates grammars and reports divergence between expected and observed parse states.',
-      deployedUrl: 'https://example.com/deployed/grammar-fuzzer',
-      githubUrl: 'https://github.com/mystique/grammar-fuzzer',
-      techTags: ['Fuzzing', 'Parsing', 'Differential'],
-    },
-    {
-      id: 'gallery-05',
-      intent: 'Personal',
-      subCategory: 'Utility Scripts',
-      title: 'Recon Batch Toolkit',
-      description:
-        'Opinionated shell toolkit for structuring reconnaissance runs and output archives.',
-      deployedUrl: 'https://example.com/deployed/recon-toolkit',
-      githubUrl: 'https://github.com/mystique/recon-toolkit',
-      techTags: ['Automation', 'CLI', 'Archiving'],
-    },
-  ];
-
   function setView({ view, transition }) {
     const projectsSection = document.getElementById('projects');
     const gallerySection = document.getElementById('projectsGallery');
@@ -356,7 +261,7 @@
 
     // Render cards
     grid.innerHTML = '';
-    const items = PROJECT_GALLERY_CATALOG.filter((p) => p.intent === intent && (!subCategory || p.subCategory === subCategory));
+    const items = projectCatalog.filter((p) => p.intent === intent && (!subCategory || p.subCategory === subCategory));
 
     if (!items.length) {
       const empty = document.createElement('div');
@@ -376,8 +281,11 @@
           .map((t) => `<span class="outcomeTag ${outcomeTagClass(t)}">${escapeHtml(t)}</span>`)
           .join('');
 
+        const deployedLink = p.deployedUrl
+          ? `<a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noopener noreferrer"><span class="projectLink__icon">↗</span>Live demo</a>`
+          : '';
         el.innerHTML = `
-          <h3 class="projectLinkCard__title">${escapeHtml(p.title)}</h3>
+          <h3 class="projectLinkCard__title">${escapeHtml(p.title || p.name)}</h3>
           <p class="projectLinkCard__desc">${escapeHtml(p.description)}</p>
 
           <div class="projectMetaRow" aria-label="Gallery metadata">
@@ -388,11 +296,8 @@
           <div class="outcomeTags" aria-label="Tech tags">${tagsHtml}</div>
 
           <div class="projectLinkRow">
-            <a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noreferrer">
-              <span class="projectLink__icon">↗</span>
-              Deployed
-            </a>
-            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noreferrer">
+            ${deployedLink}
+            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener noreferrer">
               <span class="projectLink__icon">⌁</span>
               GitHub
             </a>
@@ -440,14 +345,13 @@
     if (!el) return;
 
     el.innerHTML = '';
-    const subs = SUB_CATEGORIES_BY_INTENT[intent] || [];
+    const suggestedSubs = SUB_CATEGORIES_BY_INTENT[intent] || [];
+    const projectsForIntent = projectCatalog.filter((p) => p.intent === intent);
+    const actualSubCategories = [...new Set(projectsForIntent.map((project) => project.subCategory).filter(Boolean))];
+    const choices = actualSubCategories.length ? actualSubCategories : (projectsForIntent.length ? [] : suggestedSubs);
+    const defaultSub = actualSubCategories[0] || choices[0] || null;
 
-    // Prefer a sub-category that actually has a project; fall back to first.
-    const projectsForIntent = PROJECT_CATALOG.filter((p) => p.intent === intent);
-    const subWithProject = subs.find((s) => projectsForIntent.some((p) => p.subCategory === s));
-    const defaultSub = subWithProject || subs[0] || null;
-
-    subs.forEach((sub) => {
+    choices.forEach((sub) => {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'subCatBtn';
@@ -480,20 +384,17 @@
         // update pressed state
         el.querySelectorAll('[aria-current="true"]').forEach((b) => b.setAttribute('aria-current', 'false'));
         btn.setAttribute('aria-current', 'true');
+        selectedIntent = intent;
+        selectedSubCategory = sub;
         renderProjects({ intent, subCategory: sub });
-
-        // open gallery (page-like view)
-        openGallery({ intent, subCategory: sub });
       });
 
       el.appendChild(btn);
     });
 
-    if (defaultSub) {
-      renderProjects({ intent, subCategory: defaultSub });
-    } else {
-      renderProjects({ intent, subCategory: '' });
-    }
+    selectedIntent = intent;
+    selectedSubCategory = defaultSub || '';
+    renderProjects({ intent, subCategory: selectedSubCategory });
   }
 
   function renderProjects({ intent, subCategory }) {
@@ -501,7 +402,7 @@
     const resultsRoot = document.getElementById('projectsResults');
     if (!track || !resultsRoot) return;
 
-    const items = PROJECT_GALLERY_CATALOG.filter(
+    const items = projectCatalog.filter(
       (p) => p.intent === intent && (!subCategory || p.subCategory === subCategory)
     );
 
@@ -513,7 +414,7 @@
       el.innerHTML = `
         <div class="projectLinkCard">
           <h3 class="projectLinkCard__title mono" style="margin-bottom:6px">no captures</h3>
-          <p class="projectLinkCard__desc">No deployed/GitHub projects mapped into this sub-category yet.</p>
+          <p class="projectLinkCard__desc">No repositories are classified here yet. Add a mapping or matching GitHub topics.</p>
         </div>
       `;
       track.appendChild(el);
@@ -534,7 +435,7 @@
       slide.innerHTML = `
         <div class="projectLinkCard" tabindex="0">
           <div class="projectLinkCard__top">
-            <h3 class="projectLinkCard__title">${escapeHtml(p.title)}</h3>
+            <h3 class="projectLinkCard__title">${escapeHtml(p.title || p.name)}</h3>
           </div>
 
           <p class="projectLinkCard__desc">${escapeHtml(p.description)}</p>
@@ -547,11 +448,8 @@
           <div class="outcomeTags" aria-label="Tech tags">${tagsHtml}</div>
 
           <div class="projectLinkRow">
-            <a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noreferrer" aria-label="Open deployed project">
-              <span class="projectLink__icon">↗</span>
-              Deployed
-            </a>
-            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noreferrer" aria-label="Open GitHub repository">
+            ${p.deployedUrl ? `<a class="projectLink" href="${escapeHtml(p.deployedUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open live demo"><span class="projectLink__icon">↗</span>Live demo</a>` : ''}
+            <a class="projectLink" href="${escapeHtml(p.githubUrl)}" target="_blank" rel="noopener noreferrer" aria-label="Open GitHub repository">
               <span class="projectLink__icon">⌁</span>
               GitHub
             </a>
@@ -763,9 +661,9 @@
   function escapeHtml(s) {
     return String(s)
       .replaceAll('&', '&amp;')
-      .replaceAll('<', '<')
-      .replaceAll('>', '>')
-      .replaceAll('"', '"')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
       .replaceAll("'", '&#039;');
   }
 
@@ -901,11 +799,11 @@
   function init() {
     initYear();
     initSkills();
-    initProjects();
     initGallery();
     initProjectsNav();
     initContact();
     initTilt();
+    loadGitHubProjects();
 
     resize();
     seed();

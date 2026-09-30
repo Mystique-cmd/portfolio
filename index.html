@@ -244,7 +244,7 @@
           <div class="sectionHeader__tag">/projects</div>
           <h2 id="projects-title">System snapshots</h2>
           <p class="sectionHeader__desc">
-            Intent-first traversal. Click an intent to load deployed + GitHub project cards.
+            Browse live GitHub repositories by intent and category. Add mappings in the project configuration or use repository topics.
           </p>
         </div>
 
@@ -273,6 +273,10 @@
                 <span class="navNode__label">Teaching &amp; Narrative</span>
                 <span class="navNode__meta mono">write-ups → demos</span>
               </button>
+              <button class="navNode" type="button" role="listitem" data-intent="Uncategorized" aria-pressed="false">
+                <span class="navNode__label">Uncategorized</span>
+                <span class="navNode__meta mono">unmapped repositories</span>
+              </button>
             </div>
           </div>
 
@@ -299,6 +303,10 @@
                   <span class="mapNode__glyph">T</span>
                   <span class="mapNode__text">Teaching</span>
                 </button>
+                <button class="mapNode" type="button" data-map="Uncategorized" aria-pressed="false">
+                  <span class="mapNode__glyph">?</span>
+                  <span class="mapNode__text">Uncategorized</span>
+                </button>
               </div>
               <div class="systemsMap__edges" aria-hidden="true">
                 <span class="edge edge--1">→</span>
@@ -308,8 +316,14 @@
               </div>
             </div>
           </div>
+
+          <div class="projectsNav__right" aria-label="Project categories">
+            <div class="projectsNav__panelTitle mono">category</div>
+            <div id="subCategoryList" class="subCats" role="list" aria-label="Categories"></div>
+          </div>
         </div>
 
+        <p id="projectsStatus" class="projectsStatus muted" role="status" aria-live="polite">Loading GitHub repositories…</p>
         <div id="projectsResults" class="projectsResults" aria-live="polite">
           <div class="projectsCarousel" data-projects-carousel>
             <div class="projectsCarousel__head">
@@ -446,10 +460,10 @@
 
           <aside class="linksCard" aria-label="Links">
             <div class="linksCard__title mono">profiles</div>
-            <a class="linkRow" href="#" target="_blank" rel="noreferrer">
+            <a class="linkRow" href="#" id="githubProfileLink" target="_blank" rel="noopener noreferrer" hidden>
               <span class="linkRow__icon">↗</span>
               <span class="linkRow__text">GitHub</span>
-              <span class="linkRow__meta mono">github.com/mystique</span>
+              <span class="linkRow__meta mono" id="githubProfileLabel">GitHub profile</span>
             </a>
             <a class="linkRow" href="#" target="_blank" rel="noreferrer">
               <span class="linkRow__icon">↗</span>

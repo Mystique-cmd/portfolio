@@ -664,6 +664,13 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
   background: rgba(12,14,34,.14);
   padding:16px;
 }
+.projectsStatus{
+  margin:16px 0 0;
+  min-height:1.5em;
+  font-size:13px;
+}
+.projectsStatus[data-state="error"]{color:#ff9aad}
+.projectsStatus[data-state="success"]{color:rgba(42,245,152,.88)}
 .projectsNav__center{
   min-height: 360px;
   border-radius: var(--radius2);
@@ -676,6 +683,7 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
   flex-direction:column;
   gap:10px;
 }
+.projectsNav__right{max-height:360px; overflow:auto;}
 .navNode{
   width:100%;
   text-align:left;
@@ -948,6 +956,7 @@ input:focus, textarea:focus{border-color: rgba(56,246,255,.35); box-shadow: 0 0 
   .projectsNav{grid-template-columns:1fr;}
   .projectsNav__center{min-height:auto}
   .systemsMap{min-height: 240px;}
+  .projectsNav__right{max-height:none;}
 }
 
 

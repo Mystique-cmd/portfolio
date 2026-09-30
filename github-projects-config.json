@@ -1,14 +1,7 @@
 {
   "github": {
-    "username": "YOUR_GITHUB_USERNAME",
-    "tokenEnvVar": "GITHUB_TOKEN",
-    "repos": [
-      {
-        "intent": "Academic",
-        "subCategory": "Algorithms",
-        "repoName": "systems-profiler"
-      }
-    ]
+    "username": "Mystique-cmd",
+    "repos": []
   }
 }
 
