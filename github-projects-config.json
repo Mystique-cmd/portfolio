@@ -1,7 +1,49 @@
 {
   "github": {
     "username": "Mystique-cmd",
-    "repos": []
+    "repos": [
+      { "repoName": "ugaliflex", "intent": "Professional", "subCategory": "Web Applications" },
+      { "repoName": "Exploit_Development", "intent": "Professional", "subCategory": "Exploit Development", "techTags": ["Systems Security"] },
+      { "repoName": "jobrecon", "intent": "Personal", "subCategory": "Career Tools", "techTags": ["Fork"] },
+      { "repoName": "uniregapp", "intent": "Personal", "subCategory": "Education Tools" },
+      { "repoName": "app", "intent": "Personal", "subCategory": "Application Development" },
+      { "repoName": "portfolio", "intent": "Personal", "subCategory": "Portfolio & Branding" },
+      { "repoName": "Assembly_and_Debugging", "intent": "Teaching & Narrative", "subCategory": "Low-Level Tutorials" },
+      { "repoName": "Memory_and_Binary_Fundamentals", "intent": "Teaching & Narrative", "subCategory": "Binary Internals" },
+      { "repoName": "diagnosisassistant", "intent": "Personal", "subCategory": "Health Applications" },
+      { "repoName": "scythe", "intent": "Professional", "subCategory": "Recon Tooling" },
+      { "repoName": "timepod", "intent": "Experimental", "subCategory": "Systems Programming" },
+      { "repoName": "syntropy", "intent": "Experimental", "subCategory": "Systems Programming" },
+      { "repoName": "ulinzimesh", "intent": "Professional", "subCategory": "Security Automation" },
+      { "repoName": "accesscontrol.sim", "intent": "Academic", "subCategory": "Distributed Systems" },
+      { "repoName": "course_registration_system", "intent": "Academic", "subCategory": "Database Systems" },
+      { "repoName": "deltahunter", "intent": "Professional", "subCategory": "Recon Tooling" },
+      { "repoName": "fundamentals", "intent": "Academic", "subCategory": "Assembly & Computer Architecture" },
+      { "repoName": "chatty", "intent": "Academic", "subCategory": "Distributed Systems" },
+      { "repoName": "powerlearnproject.org", "intent": "Teaching & Narrative", "subCategory": "Coursework & Learning" },
+      { "repoName": "daemonnotes", "intent": "Teaching & Narrative", "subCategory": "Technical Documentation" },
+      { "repoName": "clientserver.comm", "intent": "Academic", "subCategory": "Networking" },
+      { "repoName": "bufferoverflow", "intent": "Teaching & Narrative", "subCategory": "Systems Security" },
+      { "repoName": "kernel", "intent": "Academic", "subCategory": "Operating Systems" },
+      { "repoName": "nexus", "intent": "Professional", "subCategory": "Recon Tooling" },
+      { "repoName": "phantomaudit", "intent": "Professional", "subCategory": "Security Automation" },
+      { "repoName": "biometricauthenticator", "intent": "Personal", "subCategory": "Identity & Access" },
+      { "repoName": "osinternals", "intent": "Academic", "subCategory": "Operating Systems" },
+      { "repoName": "ghostport", "intent": "Experimental", "subCategory": "Network Systems" },
+      { "repoName": "phantomsocket", "intent": "Experimental", "subCategory": "Network Systems" },
+      { "repoName": "hydroshade", "intent": "Experimental", "subCategory": "Fuzzy Logic" },
+      { "repoName": "shadowtithe", "intent": "Experimental", "subCategory": "Systems Programming" },
+      { "repoName": "novelnest", "intent": "Personal", "subCategory": "Web Applications" },
+      { "repoName": "cookbookly", "intent": "Personal", "subCategory": "Web Applications" },
+      { "repoName": "reaperprompt", "intent": "Experimental", "subCategory": "Developer Tools" },
+      { "repoName": "bugoracle", "intent": "Experimental", "subCategory": "AI & Developer Tools" },
+      { "repoName": "jamiishop", "intent": "Personal", "subCategory": "E-commerce" },
+      { "repoName": "visioncrypt", "intent": "Personal", "subCategory": "Accessibility" },
+      { "repoName": "pixmorph", "intent": "Experimental", "subCategory": "Image Processing" },
+      { "repoName": "exploitarium", "intent": "Teaching & Narrative", "subCategory": "Exploit Development" },
+      { "repoName": "pixspecter", "intent": "Experimental", "subCategory": "Graphics & Visualization" },
+      { "repoName": "sympcrypt", "intent": "Academic", "subCategory": "Logic & Cryptography" }
+    ]
   }
 }
 
