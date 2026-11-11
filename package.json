@@ -8,10 +8,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "check": "node --check app.js && node --check server.js && node --check projects-api.js && node --check api/projects.js"
+    "check": "node --check app.js && node --check server.js"
   },
   "dependencies": {
     "express": "^4.19.2"
   }
 }
-

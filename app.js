@@ -161,25 +161,45 @@
   }
 
   async function loadGitHubProjects() {
-    setProjectsStatus('Loading GitHub repositories…', 'loading');
+    setProjectsStatus('Loading the local project catalog…', 'loading');
     try {
-      const response = await fetch('/api/projects', { headers: { Accept: 'application/json' } });
+      const response = await fetch('/github-projects-config.json', { headers: { Accept: 'application/json' } });
       const payload = await response.json();
       if (!response.ok) throw new Error(payload.error || `Request failed (${response.status})`);
-      projectCatalog = Array.isArray(payload) ? payload : (payload.projects || []);
-      if (payload.username) {
+      const username = payload.github?.username || '';
+      const repositories = Array.isArray(payload.github?.repos) ? payload.github.repos : [];
+      projectCatalog = repositories.map((repo) => {
+        const name = String(repo.repoName || '').trim();
+        const displayName = name.replaceAll('_', ' ').replaceAll('.', ' ');
+        return {
+          id: name,
+          name,
+          title: repo.title || displayName.replace(/\b\w/g, (char) => char.toUpperCase()),
+          description: repo.description || 'Open the GitHub repository for source code, documentation, and project details.',
+          intent: repo.intent || 'Uncategorized',
+          subCategory: repo.subCategory || 'Uncategorized',
+          deployedUrl: repo.deployedUrl || '',
+          githubUrl: `https://github.com/${encodeURIComponent(username)}/${encodeURIComponent(name)}`,
+          language: repo.language || '',
+          stars: Number(repo.stars) || 0,
+          updatedAt: repo.updatedAt || '',
+          isFork: Boolean(repo.isFork),
+          techTags: Array.isArray(repo.techTags) ? repo.techTags : [],
+        };
+      }).filter((project) => project.name);
+      if (username) {
         const profileLink = document.getElementById('githubProfileLink');
         const profileLabel = document.getElementById('githubProfileLabel');
         if (profileLink) {
-          profileLink.href = `https://github.com/${encodeURIComponent(payload.username)}`;
+          profileLink.href = `https://github.com/${encodeURIComponent(username)}`;
           profileLink.hidden = false;
         }
-        if (profileLabel) profileLabel.textContent = `github.com/${payload.username}`;
+        if (profileLabel) profileLabel.textContent = `github.com/${username}`;
       }
-      setProjectsStatus(`${projectCatalog.length} public repositories loaded${payload.username ? ` from @${payload.username}` : ''}.`, 'success');
+      setProjectsStatus(`${projectCatalog.length} projects loaded from the local catalog${username ? ` for @${username}` : ''}.`, 'success');
     } catch (error) {
       projectCatalog = [];
-      setProjectsStatus(`GitHub projects could not be loaded: ${error.message} Start the portfolio server and configure a GitHub username.`, 'error');
+      setProjectsStatus(`The project catalog could not be loaded: ${error.message} Serve the portfolio over HTTP and check github-projects-config.json.`, 'error');
     }
     renderSubCategories(selectedIntent);
   }
